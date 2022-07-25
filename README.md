@@ -49,13 +49,21 @@ The code in this repo supports joint training of both factual and hypothetical q
 
 ## Citation 
 ```bash
-@inproceedings{li2022learning,
-  title={Learning to Imagine: Integrating Counterfactual Thinking in Neural Discrete Reasoning},
-  author={Li, Moxin and Feng, Fuli and Zhang, Hanwang and He, Xiangnan and Zhu, Fengbin and Chua, Tat-Seng},
-  booktitle={Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
-  pages={57--69},
-  year={2022}
+@inproceedings{li-etal-2022-learning,
+    title = "Learning to Imagine: Integrating Counterfactual Thinking in Neural Discrete Reasoning",
+    author = "Li, Moxin  and
+      Feng, Fuli  and
+      Zhang, Hanwang  and
+      He, Xiangnan  and
+      Zhu, Fengbin  and
+      Chua, Tat-Seng",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    year = "2022",
+    publisher = "Association for Computational Linguistics",
+    pages = "57--69"
 }
+
+
 @inproceedings{zhu-etal-2021-tat,
     title = "{TAT}-{QA}: A Question Answering Benchmark on a Hybrid of Tabular and Textual Content in Finance",
     author = "Zhu, Fengbin  and
@@ -67,12 +75,8 @@ The code in this repo supports joint training of both factual and hypothetical q
       Feng, Fuli  and
       Chua, Tat-Seng",
     booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
-    month = aug,
     year = "2021",
-    address = "Online",
     publisher = "Association for Computational Linguistics",
-    url = "https://aclanthology.org/2021.acl-long.254",
-    doi = "10.18653/v1/2021.acl-long.254",
     pages = "3277--3287"
 }
 ```
