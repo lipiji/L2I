@@ -4,7 +4,7 @@ L2I: The baseline method for CCIR 22 competition
 This repositary contains the baseline method for CCIR 22 https://www.datafountain.cn/competitions/573
 
 ## Dataset
-The data used for the competition is from **TAT-QA** ([paper](https://aclanthology.org/2021.acl-long.254.pdf)) ([github repo](https://github.com/NExTplusplus/TAT-QA)) and **TAT-HQA** ([paper](https://aclanthology.org/2022.acl-long.5.pdf)) ([github repo]()). Please refer to the paper for data collection process and baseline method description.
+The data used for the competition is from **TAT-QA** ([paper](https://aclanthology.org/2021.acl-long.254.pdf)) ([github repo](https://github.com/NExTplusplus/TAT-QA)) and **TAT-HQA** ([paper](https://aclanthology.org/2022.acl-long.5.pdf)) . Please refer to the paper for data collection process and baseline method description.
 
 The released training data `tatqa_and_hqa_dataset_train.json` is stored in `dataset_raw`, containing 13,251 factual questions and 6,621 hypothetical questions with ground-truth answers. You can split the data into training and validation set. 
 
