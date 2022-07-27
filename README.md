@@ -43,10 +43,12 @@ Run `evaluate.py` by specifying the data file with gold answers and the predicte
 ```bash
 python evaluate.py dataset_extra_field/tatqa_and_hqa_field_dev.json tag_op/model_L2I/answer_dev.json 0
 ```
-## Baseline Model
-Because training the baseline model takes a long time (about 37 hours), we release the trained baseline model at https://drive.google.com/file/d/1VzYy1a_PbOUnqZZLNW58jpWTFL8PRc3B/view?usp=sharing. You may optionally utilize the model. 
+## Trained L2I Model
 
-## Difference with Paper Method
+Because training the baseline model takes a long time (about 37 hours), we release the trained baseline model. You may optionally download it via this link [Trained L2I Model](https://drive.google.com/file/d/1VzYy1a_PbOUnqZZLNW58jpWTFL8PRc3B/view?usp=sharing) from Google Driver and utilize our trained model. 
+
+
+## Difference with the Paper Method
 The code in this repo supports joint training of both factual and hypothetical questions. Note that if you want to add the matching block of TAT-HQA, i.e. set the --cross_attn_layer > 0, you probably have to first train on factual questions and fine-tune on hypothetical questions as described in TAT-HQA paper, otherwise the performance of hypothetical questions will have problem. 
 
 ## Citation 
