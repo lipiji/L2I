@@ -13,25 +13,36 @@ Note that to implement the methods in TAT-QA and TAT-HQA paper, we need to heuri
 We name the the training and validation data split as `tatqa_and_hqa_field_[train/dev].json` and store in `dataset_extra_field`, which will be processed as the input of the model. 
 
 ## Requirements
-Please set up the environments according to [TAT-QA github repo](https://github.com/NExTplusplus/TAT-QA), create an environment and download the pre-trained `RoBERTa` model. 
+Ref: [TAT-QA github repo](https://github.com/NExTplusplus/TAT-QA)
+ 
+We adopt `RoBERTa` as our encoder to develop our TagOp and use the following commands to prepare RoBERTa model 
+
+```bash
+mkdir roberta.large && cd roberta.large
+wget -O pytorch_model.bin https://s3.amazonaws.com/models.huggingface.co/bert/roberta-large-pytorch_model.bin
+wget -O config.json https://s3.amazonaws.com/models.huggingface.co/bert/roberta-large-config.json
+wget -O vocab.json https://s3.amazonaws.com/models.huggingface.co/bert/roberta-large-vocab.json
+wget -O merges.txt https://s3.amazonaws.com/models.huggingface.co/bert/roberta-large-merges.txt
+```
 
 ## Data Processing
 
 ```bash
-PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/prepare_dataset.py --input_path ./dataset_extra_field --output_dir tag_op/data/roberta --encoder roberta --roberta_model path_to_roberta_model --mode [train/dev]
+PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/prepare_dataset.py --input_path ./dataset_extra_field --output_dir tag_op/data/roberta --encoder roberta --roberta_model roberta.large --mode train
+PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/prepare_dataset.py --input_path ./dataset_extra_field --output_dir tag_op/data/roberta --encoder roberta --roberta_model roberta.large --mode dev
 ```
 Please fill in the path to roberta_model and select the mode. The processed train/dev data will be stored in `tag_op/data/roberta`. 
 
 ## Training
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py --data_dir tag_op/data/roberta --save_dir tag_op/model_L2I --batch_size 32 --eval_batch_size 32 --max_epoch 50 --warmup 0.06 --optimizer adam --learning_rate 5e-4  --weight_decay 5e-5 --seed 123 --gradient_accumulation_steps 4 --bert_learning_rate 1.5e-5 --bert_weight_decay 0.01 --log_per_updates 100 --eps 1e-6  --encoder roberta --test_data_dir tag_op/data/roberta/ --roberta_model path_to_roberta_model 
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py --data_dir tag_op/data/roberta --save_dir tag_op/model_L2I --batch_size 32 --eval_batch_size 32 --max_epoch 50 --warmup 0.06 --optimizer adam --learning_rate 5e-4  --weight_decay 5e-5 --seed 123 --gradient_accumulation_steps 4 --bert_learning_rate 1.5e-5 --bert_weight_decay 0.01 --log_per_updates 100 --eps 1e-6  --encoder roberta --test_data_dir tag_op/data/roberta/ --roberta_model roberta.large
 ```
 
 ## Testing
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:$(pwd) python tag_op/predictor.py --data_dir tag_op/data/roberta --test_data_dir tag_op/data/roberta --save_dir tag_op/model_L2I --eval_batch_size 32 --model_path tag_op/model_L2I --encoder roberta --roberta_model path_to_roberta_model
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:$(pwd) python tag_op/predictor.py --data_dir tag_op/data/roberta --test_data_dir tag_op/data/roberta --save_dir tag_op/model_L2I --eval_batch_size 32 --model_path tag_op/model_L2I --encoder roberta --roberta_model roberta.large
 ```
 
 The prediction result for the validation split will be stored in `tag_op/model_L2I/answer_dev.json`
