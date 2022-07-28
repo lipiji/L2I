@@ -2,8 +2,8 @@ import os
 import pickle
 import argparse
 from data.tatqa_dataset import TagTaTQATestReader, TagTaTQAReader
-from transformers.tokenization_roberta import RobertaTokenizer
-
+#from transformers.tokenization_roberta import RobertaTokenizer
+from transformers import RobertaTokenizer
 from transformers import BertTokenizer
 
 parser = argparse.ArgumentParser()
