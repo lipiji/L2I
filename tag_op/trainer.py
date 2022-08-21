@@ -13,7 +13,7 @@ from data.data_util import get_op_3, get_arithmetic_op_index_3
 from data.data_util import OPERATOR_CLASSES_, IF_OPERATOR_CLASSES_
 from tools.utils import create_logger, set_environment
 from data.tatqa_batch_gen import TaTQABatchGen, TaTQATestBatchGen
-from transformers import RobertaModel, BertModel
+from transformers import RobertaModel, BertModel, AutoModel, AutoModelForSequenceClassification
 from tagop.modeling_tagop_L2I import TagopModel
 from tools.model import TagopFineTuningModel
 
@@ -72,7 +72,8 @@ def main():
     elif args.encoder == 'roberta':
         bert_model = RobertaModel.from_pretrained(args.roberta_model)
     elif args.encoder == 'finbert':
-        bert_model = BertModel.from_pretrained(args.finbert_model)
+        #bert_model = BertModel.from_pretrained(args.finbert_model)
+        bert_model = BertModel.from_pretrained("ProsusAI/finbert")
 
     if args.ablation_mode == 0: 
         operators = OPERATOR_CLASSES_

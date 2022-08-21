@@ -4,7 +4,7 @@ import argparse
 from data.tatqa_dataset import TagTaTQATestReader, TagTaTQAReader
 #from transformers.tokenization_roberta import RobertaTokenizer
 from transformers import RobertaTokenizer
-from transformers import BertTokenizer
+from transformers import BertTokenizer,AutoTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str)
@@ -25,7 +25,8 @@ elif args.encoder == 'bert':
     tokenizer = BertTokenizer.from_pretrained('bert-large-uncased')
     sep = '[SEP]'
 elif args.encoder == 'finbert':
-    tokenizer = BertTokenizer.from_pretrained(args.input_path + "/finbert")
+    #tokenizer = BertTokenizer.from_pretrained(args.input_path + "/finbert")
+    tokenizer = BertTokenizer.from_pretrained("ProsusAI/finbert")
     sep = '[SEP]'
 
 
