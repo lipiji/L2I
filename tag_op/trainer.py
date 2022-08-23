@@ -78,6 +78,8 @@ def main():
         bert_model = AutoModel.from_pretrained("microsoft/deberta-v3-large")
     elif args.encoder == 'deberta-v2-xlarge':
         bert_model = AutoModel.from_pretrained("microsoft/deberta-v2-xlarge")
+    elif args.encoder == 'deberta-v2-xxlarge':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v2-xxlarge")
     elif args.encoder == 't5-11b':
         bert_model = AutoModelWithLMHead.from_pretrained("t5-11b")
     elif args.encoder == 't5-3b':

@@ -36,6 +36,9 @@ elif args.encoder == "deberta-v3-large":
 elif args.encoder == "deberta-v2-xlarge":
     tokenizer = DebertaV2Tokenizer.from_pretrained("microsoft/deberta-v2-xlarge")
     sep = '[SEP]'
+elif args.encoder == "deberta-v2-xxlarge":
+    tokenizer = DebertaV2Tokenizer.from_pretrained("microsoft/deberta-v2-xxlarge")
+    sep = '[SEP]'
 elif args.encoder == "t5-11b":
     tokenizer = T5Tokenizer.from_pretrained("t5-11b")
     sep = '[SEP]'
