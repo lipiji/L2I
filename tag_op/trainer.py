@@ -74,6 +74,11 @@ def main():
     elif args.encoder == 'finbert':
         #bert_model = BertModel.from_pretrained(args.finbert_model)
         bert_model = BertModel.from_pretrained("ProsusAI/finbert")
+    elif args.encoder == 'deberta-v3-large':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v3-large")
+    elif args.encoder == 'deberta-v2-xlarge':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v2-xlarge")
+
 
     if args.ablation_mode == 0: 
         operators = OPERATOR_CLASSES_

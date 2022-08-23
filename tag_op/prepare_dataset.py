@@ -4,7 +4,7 @@ import argparse
 from data.tatqa_dataset import TagTaTQATestReader, TagTaTQAReader
 #from transformers.tokenization_roberta import RobertaTokenizer
 from transformers import RobertaTokenizer
-from transformers import BertTokenizer,AutoTokenizer
+from transformers import BertTokenizer,AutoTokenizer,DebertaV2Tokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str)
@@ -18,8 +18,8 @@ parser.add_argument("--roberta_model", type=str, default='')
 args = parser.parse_args()
 
 if args.encoder == 'roberta':
-    # tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
-    tokenizer = RobertaTokenizer.from_pretrained(args.roberta_model)
+    tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
+    #tokenizer = RobertaTokenizer.from_pretrained(args.roberta_model)
     sep = '<s>'
 elif args.encoder == 'bert':
     tokenizer = BertTokenizer.from_pretrained('bert-large-uncased')
@@ -28,11 +28,20 @@ elif args.encoder == 'finbert':
     #tokenizer = BertTokenizer.from_pretrained(args.input_path + "/finbert")
     tokenizer = BertTokenizer.from_pretrained("ProsusAI/finbert")
     sep = '[SEP]'
+elif args.encoder == "deberta-v3-large":
+    tokenizer = DebertaV2Tokenizer.from_pretrained("microsoft/deberta-v3-large")
+    sep = '[SEP]'
+elif args.encoder == "deberta-v2-xlarge":
+    tokenizer = DebertaV2Tokenizer.from_pretrained("microsoft/deberta-v2-xlarge")
+    sep = '[SEP]'
 
 
 if args.mode == 'dev':
     data_reader = TagTaTQATestReader(tokenizer, args.passage_length_limit, args.question_length_limit, sep=sep)
     data_mode = ["dev"]
+elif args.mode == 'test':
+    data_reader = TagTaTQATestReader(tokenizer, args.passage_length_limit, args.question_length_limit, sep=sep)
+    data_mode = ["test"]
 else:
     data_reader = TagTaTQAReader(tokenizer, args.passage_length_limit, args.question_length_limit, sep=sep)
     data_mode = ["train"]

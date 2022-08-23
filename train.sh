@@ -1,10 +1,10 @@
 m=roberta
-CUDA_VISIBLE_DEVICES=7 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py \
+CUDA_VISIBLE_DEVICES=4 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py \
   --data_dir tag_op/data/$m \
-  --save_dir tag_op/model_L2I \
-  --batch_size 32 \
-  --eval_batch_size 32 \
-  --max_epoch 50 \
+  --save_dir tag_op/model_L2I/$m \
+  --batch_size 10 \
+  --eval_batch_size 8 \
+  --max_epoch 100 \
   --warmup 0.06 \
   --optimizer adam \
   --learning_rate 5e-4  \
