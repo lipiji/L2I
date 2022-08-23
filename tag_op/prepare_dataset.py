@@ -19,8 +19,8 @@ parser.add_argument("--roberta_model", type=str, default='')
 args = parser.parse_args()
 
 if args.encoder == 'roberta':
-    # tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
-    tokenizer = RobertaTokenizer.from_pretrained(args.roberta_model)
+    tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
+    #tokenizer = RobertaTokenizer.from_pretrained(args.roberta_model)
     sep = '<s>'
 elif args.encoder == 'bert':
     tokenizer = BertTokenizer.from_pretrained('bert-large-uncased')
@@ -53,14 +53,12 @@ elif args.encoder == "electra-large-discriminator":
 
 
 
-
-
-
-
-
 if args.mode == 'dev':
     data_reader = TagTaTQATestReader(tokenizer, args.passage_length_limit, args.question_length_limit, sep=sep)
     data_mode = ["dev"]
+#elif args.mode == 'test':
+#    data_reader = TagTaTQATestReader(tokenizer, args.passage_length_limit, args.question_length_limit, sep=sep)
+#    data_mode = ["test"]
 else:
     data_reader = TagTaTQAReader(tokenizer, args.passage_length_limit, args.question_length_limit, sep=sep)
     data_mode = ["train"]

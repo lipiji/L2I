@@ -54,7 +54,7 @@ set_environment(args.cuda)
 def main():
     dev_itr = TaTQATestBatchGen(args, data_mode="dev", encoder=args.encoder)
     if args.encoder == 'roberta':
-        bert_model = RobertaModel.from_pretrained(args.roberta_model)
+        bert_model = RobertaModel.from_pretrained("roberta-large")
     elif args.encoder == 'bert':
         bert_model = BertModel.from_pretrained('bert-large-uncased')
     elif args.encoder == 'finbert':
