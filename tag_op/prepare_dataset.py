@@ -3,8 +3,9 @@ import pickle
 import argparse
 from data.tatqa_dataset import TagTaTQATestReader, TagTaTQAReader
 #from transformers.tokenization_roberta import RobertaTokenizer
-from transformers import RobertaTokenizer
-from transformers import BertTokenizer,AutoTokenizer
+from transformers import RobertaTokenizer,T5Tokenizer,ElectraTokenizer
+from transformers import BertTokenizer,AutoTokenizer,DebertaV2Tokenizer
+from transformers import XLMRobertaTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str)
@@ -28,6 +29,33 @@ elif args.encoder == 'finbert':
     #tokenizer = BertTokenizer.from_pretrained(args.input_path + "/finbert")
     tokenizer = BertTokenizer.from_pretrained("ProsusAI/finbert")
     sep = '[SEP]'
+elif args.encoder == "deberta-v3-large":
+    tokenizer = DebertaV2Tokenizer.from_pretrained("microsoft/deberta-v3-large")
+    sep = '[SEP]'
+elif args.encoder == "deberta-v2-xlarge":
+    tokenizer = DebertaV2Tokenizer.from_pretrained("microsoft/deberta-v2-xlarge")
+    sep = '[SEP]'
+elif args.encoder == "t5-11b":
+    tokenizer = T5Tokenizer.from_pretrained("t5-11b")
+    sep = '[SEP]'
+elif args.encoder == "t5-3b":
+    tokenizer = T5Tokenizer.from_pretrained("t5-3b")
+    sep = '[SEP]'
+elif args.encoder == "albert-xxlarge-v2":
+    tokenizer = T5Tokenizer.from_pretrained("albert-xxlarge-v2")
+    sep = '[SEP]'
+elif args.encoder == "xlm-roberta-large":
+    tokenizer = XLMRobertaTokenizer.from_pretrained("/data/pjli/workspace/gitcodes/L2I/xlm-roberta-large/")
+    sep = '[SEP]'
+elif args.encoder == "electra-large-discriminator":
+    tokenizer = ElectraTokenizer.from_pretrained("google/electra-large-discriminator")
+    sep = '[SEP]'
+
+
+
+
+
+
 
 
 if args.mode == 'dev':

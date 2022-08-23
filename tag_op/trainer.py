@@ -13,7 +13,8 @@ from data.data_util import get_op_3, get_arithmetic_op_index_3
 from data.data_util import OPERATOR_CLASSES_, IF_OPERATOR_CLASSES_
 from tools.utils import create_logger, set_environment
 from data.tatqa_batch_gen import TaTQABatchGen, TaTQATestBatchGen
-from transformers import RobertaModel, BertModel, AutoModel, AutoModelForSequenceClassification
+from transformers import RobertaModel, BertModel, AutoModel, AlbertModel, AutoModelWithLMHead
+from transformers import T5Model,AutoModelForMaskedLM,ElectraForPreTraining
 from tagop.modeling_tagop_L2I import TagopModel
 from tools.model import TagopFineTuningModel
 
@@ -74,6 +75,20 @@ def main():
     elif args.encoder == 'finbert':
         #bert_model = BertModel.from_pretrained(args.finbert_model)
         bert_model = BertModel.from_pretrained("ProsusAI/finbert")
+    elif args.encoder == 'deberta-v3-large':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v3-large")
+    elif args.encoder == 'deberta-v2-xlarge':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v2-xlarge")
+    elif args.encoder == 't5-11b':
+        bert_model = AutoModelWithLMHead.from_pretrained("t5-11b")
+    elif args.encoder == 't5-3b':
+        bert_model = AutoModelWithLMHead.from_pretrained("t5-3b")
+    elif args.encoder == 'albert-xxlarge-v2':
+        bert_model = AlbertModel.from_pretrained("albert-xxlarge-v2")
+    elif args.encoder == 'electra-large-discriminator':
+        bert_model = ElectraForPreTraining.from_pretrained("google/electra-large-discriminator")
+    elif args.encoder == 'xlm-roberta-large':
+        bert_model = AutoModel.from_pretrained("xlm-roberta-large")
 
     if args.ablation_mode == 0: 
         operators = OPERATOR_CLASSES_
