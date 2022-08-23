@@ -71,7 +71,7 @@ def main():
     if args.encoder == 'bert':
         bert_model = BertModel.from_pretrained('bert-large-uncased')
     elif args.encoder == 'roberta':
-        bert_model = RobertaModel.from_pretrained("roberta")
+        bert_model = RobertaModel.from_pretrained('roberta-large')
     elif args.encoder == 'finbert':
         bert_model = BertModel.from_pretrained("ProsusAI/finbert")
     elif args.encoder == 'deberta-v3-large':
