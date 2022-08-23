@@ -1,5 +1,5 @@
-m=xlm-roberta-large
-CUDA_VISIBLE_DEVICES=7 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py \
+m=roberta
+CUDA_VISIBLE_DEVICES=6 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py \
   --data_dir tag_op/data/$m \
   --save_dir tag_op/model_L2I/$m \
   --batch_size 20 \
@@ -17,5 +17,6 @@ CUDA_VISIBLE_DEVICES=7 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op
   --eps 1e-6  \
   --encoder $m \
   --test_data_dir tag_op/data/$m/ \
+  --cross_attn_layer 3
 #  --roberta_model roberta_model
 
