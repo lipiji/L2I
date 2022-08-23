@@ -9,6 +9,8 @@ from .file_utils import is_scatter_available
 import numpy as np
 from data.data_util import get_op_1, get_op_2, get_op_3, SCALE, OPERATOR_CLASSES_, IF_OPERATOR_CLASSES_
 from tatqa_utils import to_number
+from torchcrf import CRF
+
 
 np.set_printoptions(threshold=np.inf)
 # soft dependency
@@ -118,6 +120,8 @@ class TagopModel(nn.Module):
         self.if_operator_classes = if_operator_classes
         self.scale_classes = scale_classes
         self._metrics = TaTQAEmAndF1(mode=2)
+        self.CRF_layer = CRF(2)
+
         if hidden_size is None:
             hidden_size = self.config.hidden_size
         if dropout_prob is None:
@@ -275,14 +279,37 @@ class TagopModel(nn.Module):
         concatenated_qtp_if = sequence_output + if_sequence_output
         total_if_tag_prediction = self.if_tag_predictor(concatenated_qtp_if)
         total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
-        total_if_tag_prediction = util.masked_log_softmax(total_if_tag_prediction, mask = None)
-        total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
+        #total_if_tag_prediction = util.masked_log_softmax(total_if_tag_prediction, mask = None)
+        #total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
         
+        tgp = torch.zeros_like(total_if_tag_prediction)
+        mask_matrix = (input_ids > 0).transpose(0,1)
+        mask_matrix[0,:] = True
+        if_tag_prediction_loss = self.CRF_layer(total_if_tag_prediction.transpose(0,1), if_tag_labels.long().transpose(0,1), mask = mask_matrix)
+        if_tag_prediction_loss = -1 * (if_tag_prediction_loss / batch_size)
+        decode_result = self.CRF_layer.decode(total_if_tag_prediction.transpose(0,1), mask = None)
+        decode_result = torch.tensor(decode_result).cuda()
+        tgp[:, :, 0] = tgp[:, :, 0] + (decode_result[:,:] ==0).type(torch.uint8)
+        tgp[:, :, 1] = tgp[:, :, 1] + (decode_result[:,:] ==1).type(torch.uint8)
+        total_if_tag_prediction = tgp
+        total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
+
+
         total_tag_prediction = self.tag_predictor(concatenated_qtp_if)
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
-        total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
+        #total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
+        #total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
+        tgp = torch.zeros_like(total_tag_prediction)
+
+        tag_prediction_loss = self.CRF_layer(total_tag_prediction.transpose(0,1), tag_labels.long().transpose(0,1), mask = mask_matrix)
+        tag_prediction_loss = -1 * (tag_prediction_loss / batch_size)
+        decode_result = self.CRF_layer.decode(total_tag_prediction.transpose(0,1), mask = None)
+        decode_result = torch.tensor(decode_result).cuda()
+        tgp[:, :, 0] = tgp[:, :, 0] + (decode_result[:,:] ==0).type(torch.uint8)
+        tgp[:, :, 1] = tgp[:, :, 1] + (decode_result[:,:] ==1).type(torch.uint8)
+        total_tag_prediction = tgp
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
-        
+
         paragraph_mask_only = paragraph_mask - question_if_part_attention_mask # q & p, for predicting the original operands.
         for bsz in range(len(paragraph_mask_only)):
             assert (paragraph_mask_only[bsz] == -1).any() == False
@@ -358,7 +385,7 @@ class TagopModel(nn.Module):
         # if training for both TAT-QA and TAT-HQA, ablate the if operator loss and if tag loss for TAT-QA with original mask.
         operator_prediction_loss = self.operator_criterion(operator_prediction, operator_labels).mean()
         scale_prediction_loss = self.scale_criterion(scale_prediction, scale_labels).mean()
-        tag_prediction_loss = self.NLLLoss(total_tag_prediction.transpose(1,2), tag_labels.long()).sum(-1).mean()
+        #tag_prediction_loss = self.NLLLoss(total_tag_prediction.transpose(1,2), tag_labels.long()).sum(-1).mean()
         
         if ground_truth_index != 0:
             top_2_order_prediction_bw = util.masked_log_softmax(top_2_order_prediction_bw, mask=None)
@@ -369,8 +396,8 @@ class TagopModel(nn.Module):
         # for counter arithmetic problems only, use counter_arithmetic_mask
         if_operator_prediction_loss = self.if_operator_criterion(if_operator_prediction, if_operator_labels)
         if_operator_prediction_loss = util.replace_masked_values(if_operator_prediction_loss, counter_arithmetic_mask, 0)
-        if_tag_prediction_loss = self.NLLLoss(total_if_tag_prediction.transpose(1,2), if_tag_labels.long())
-        if_tag_prediction_loss = util.replace_masked_values(if_tag_prediction_loss, counter_arithmetic_mask.unsqueeze(-1), 0).sum(-1)
+        #if_tag_prediction_loss = self.NLLLoss(total_if_tag_prediction.transpose(1,2), if_tag_labels.long())
+        #if_tag_prediction_loss = util.replace_masked_values(if_tag_prediction_loss, counter_arithmetic_mask.unsqueeze(-1), 0).sum(-1)
         if_losses = if_operator_prediction_loss + if_tag_prediction_loss
         if_losses = util.replace_masked_values(if_losses, counter_arithmetic_mask, 0).mean()
 
@@ -450,14 +477,38 @@ class TagopModel(nn.Module):
         concatenated_qtp_if = sequence_output + if_sequence_output
         total_if_tag_prediction = self.if_tag_predictor(concatenated_qtp_if)
         total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
-        total_if_tag_prediction = util.masked_log_softmax(total_if_tag_prediction, mask = None)
+        #total_if_tag_prediction = util.masked_log_softmax(total_if_tag_prediction, mask = None)
+        #total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
+
+        tgp = torch.zeros_like(total_if_tag_prediction)
+        mask_matrix = (input_ids > 0).transpose(0,1)
+        mask_matrix[0,:] = True
+        decode_result = self.CRF_layer.decode(total_if_tag_prediction.transpose(0,1), mask = None)
+        decode_result = torch.tensor(decode_result).cuda()
+        tgp[:, :, 0] = tgp[:, :, 0] + (decode_result[:,:] ==0).type(torch.uint8)
+        tgp[:, :, 1] = tgp[:, :, 1] + (decode_result[:,:] ==1).type(torch.uint8)
+        total_if_tag_prediction = tgp
         total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
+
+
+
 
         total_tag_prediction = self.tag_predictor(concatenated_qtp_if)
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
-        total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
-        total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
+        #total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
+        #total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
         
+        tgp = torch.zeros_like(total_tag_prediction)
+        mask_matrix = (input_ids > 0).transpose(0,1)
+        mask_matrix[0,:] = True
+        decode_result = self.CRF_layer.decode(total_tag_prediction.transpose(0,1), mask = None)
+        decode_result = torch.tensor(decode_result).cuda()
+        tgp[:, :, 0] = tgp[:, :, 0] + (decode_result[:,:] ==0).type(torch.uint8)
+        tgp[:, :, 1] = tgp[:, :, 1] + (decode_result[:,:] ==1).type(torch.uint8)
+        total_tag_prediction = tgp
+        total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
+
+
         # question if part top 1 number
         question_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, question_if_part_attention_mask.unsqueeze(-1), 0)
         question_if_tag_reduce_max_prediction, _ = \

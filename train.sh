@@ -1,9 +1,9 @@
-m=deberta-v2-xxlarge
+m=roberta
 CUDA_VISIBLE_DEVICES=3 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py \
   --data_dir tag_op/data/$m \
   --save_dir tag_op/model_L2I/$m \
-  --batch_size 5 \
-  --eval_batch_size 5 \
+  --batch_size 25 \
+  --eval_batch_size 25 \
   --max_epoch 100 \
   --warmup 0.06 \
   --optimizer adam \
@@ -17,6 +17,6 @@ CUDA_VISIBLE_DEVICES=3 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op
   --eps 1e-6  \
   --encoder $m \
   --test_data_dir tag_op/data/$m/ \
-  --cross_attn_layer 0
+  --cross_attn_layer 3
 #  --roberta_model roberta_model
 
