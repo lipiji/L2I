@@ -71,15 +71,13 @@ def main():
     if args.encoder == 'bert':
         bert_model = BertModel.from_pretrained('bert-large-uncased')
     elif args.encoder == 'roberta':
-        bert_model = RobertaModel.from_pretrained(args.roberta_model)
+        bert_model = RobertaModel.from_pretrained("roberta")
     elif args.encoder == 'finbert':
-        #bert_model = BertModel.from_pretrained(args.finbert_model)
         bert_model = BertModel.from_pretrained("ProsusAI/finbert")
     elif args.encoder == 'deberta-v3-large':
         bert_model = AutoModel.from_pretrained("microsoft/deberta-v3-large")
     elif args.encoder == 'deberta-v2-xlarge':
         bert_model = AutoModel.from_pretrained("microsoft/deberta-v2-xlarge")
-<<<<<<< HEAD
     elif args.encoder == 't5-11b':
         bert_model = AutoModelWithLMHead.from_pretrained("t5-11b")
     elif args.encoder == 't5-3b':
@@ -90,9 +88,6 @@ def main():
         bert_model = ElectraForPreTraining.from_pretrained("google/electra-large-discriminator")
     elif args.encoder == 'xlm-roberta-large':
         bert_model = AutoModel.from_pretrained("xlm-roberta-large")
-=======
-
->>>>>>> 081d0c508c4550ed9fc3f86df3f118d2262b69db
 
     if args.ablation_mode == 0: 
         operators = OPERATOR_CLASSES_
