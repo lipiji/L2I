@@ -1,7 +1,8 @@
 m=roberta
+t=crf
 CUDA_VISIBLE_DEVICES=3 PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tag_op python tag_op/trainer.py \
   --data_dir tag_op/data/$m \
-  --save_dir tag_op/model_L2I/$m \
+  --save_dir tag_op/model_L2I/$m/$t \
   --batch_size 25 \
   --eval_batch_size 25 \
   --max_epoch 100 \

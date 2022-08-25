@@ -120,7 +120,7 @@ class TagopModel(nn.Module):
         self.if_operator_classes = if_operator_classes
         self.scale_classes = scale_classes
         self._metrics = TaTQAEmAndF1(mode=2)
-        self.CRF_layer = CRF(2)
+        #self.CRF_layer = CRF(2)
 
         if hidden_size is None:
             hidden_size = self.config.hidden_size
@@ -477,9 +477,10 @@ class TagopModel(nn.Module):
         concatenated_qtp_if = sequence_output + if_sequence_output
         total_if_tag_prediction = self.if_tag_predictor(concatenated_qtp_if)
         total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
-        #total_if_tag_prediction = util.masked_log_softmax(total_if_tag_prediction, mask = None)
-        #total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
+        total_if_tag_prediction = util.masked_log_softmax(total_if_tag_prediction, mask = None)
+        total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
 
+        '''
         tgp = torch.zeros_like(total_if_tag_prediction)
         mask_matrix = (input_ids > 0).transpose(0,1)
         mask_matrix[0,:] = True
@@ -489,15 +490,16 @@ class TagopModel(nn.Module):
         tgp[:, :, 1] = tgp[:, :, 1] + (decode_result[:,:] ==1).type(torch.uint8)
         total_if_tag_prediction = tgp
         total_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, total_attention_mask.unsqueeze(-1), 0)
-
+        '''
 
 
 
         total_tag_prediction = self.tag_predictor(concatenated_qtp_if)
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
-        #total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
-        #total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
+        total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
+        total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
         
+        '''
         tgp = torch.zeros_like(total_tag_prediction)
         mask_matrix = (input_ids > 0).transpose(0,1)
         mask_matrix[0,:] = True
@@ -507,7 +509,7 @@ class TagopModel(nn.Module):
         tgp[:, :, 1] = tgp[:, :, 1] + (decode_result[:,:] ==1).type(torch.uint8)
         total_tag_prediction = tgp
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
-
+        '''
 
         # question if part top 1 number
         question_if_tag_prediction = util.replace_masked_values(total_if_tag_prediction, question_if_part_attention_mask.unsqueeze(-1), 0)

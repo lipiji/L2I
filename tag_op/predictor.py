@@ -12,7 +12,7 @@ from data.tatqa_batch_gen import TaTQATestBatchGen
 from data.data_util import OPERATOR_CLASSES_, IF_OPERATOR_CLASSES_
 from data.data_util import get_op_1, get_op_2, get_arithmetic_op_index_1, get_arithmetic_op_index_2
 from data.data_util import get_op_3, get_arithmetic_op_index_3
-from transformers import RobertaModel, BertModel
+from transformers import RobertaModel, BertModel,AutoModel
 from tagop.modeling_tagop_L2I import TagopModel
 from tools.model import TagopPredictModel
 import pandas as pd
@@ -59,7 +59,11 @@ def main():
         bert_model = BertModel.from_pretrained('bert-large-uncased')
     elif args.encoder == 'finbert':
         bert_model = BertModel.from_pretrained(args.finbert_model)
-
+    elif args.encoder == 'deberta-v3-large':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v3-large")
+    elif args.encoder == 'deberta-v2-xlarge':
+        bert_model = AutoModel.from_pretrained("microsoft/deberta-v2-xlarge")
+    
     if args.ablation_mode == 0:
         operators = [1 for _ in range(10)]
         arithmetic_op_index = [3, 4, 6, 7, 8, 9]
