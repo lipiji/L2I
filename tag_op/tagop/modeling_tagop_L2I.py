@@ -130,18 +130,20 @@ class TagopModel(nn.Module):
             else:
                 dropout_prob = 0.1
 
+        intermediate_dim = 3 *hidden_size
+        print(hidden_size, intermediate_dim)
         # if operator predictor
-        self.if_operator_predictor = FFNLayer(hidden_size, hidden_size, if_operator_classes, dropout_prob)
+        self.if_operator_predictor = FFNLayer(hidden_size, intermediate_dim, if_operator_classes, dropout_prob)
         # operator predictor
-        self.operator_predictor = FFNLayer(hidden_size, hidden_size, operator_classes, dropout_prob)
+        self.operator_predictor = FFNLayer(hidden_size, intermediate_dim, operator_classes, dropout_prob)
         # scale predictor
-        self.scale_predictor = FFNLayer(3 * hidden_size, hidden_size, scale_classes, dropout_prob)
+        self.scale_predictor = FFNLayer(3 * hidden_size, intermediate_dim, scale_classes, dropout_prob)
         # tag predictor
-        self.tag_predictor = FFNLayer(hidden_size, hidden_size, 2, dropout_prob)
+        self.tag_predictor = FFNLayer(hidden_size, intermediate_dim, 2, dropout_prob)
         # if tag predictor
-        self.if_tag_predictor = FFNLayer(hidden_size, hidden_size, 2, dropout_prob)
+        self.if_tag_predictor = FFNLayer(hidden_size, intermediate_dim, 2, dropout_prob)
         # order predictor
-        self.order_predictor = FFNLayer(hidden_size, hidden_size, 2, dropout_prob)
+        self.order_predictor = FFNLayer(hidden_size, intermediate_dim, 2, dropout_prob)
         
         self.share_param = share_param
         self.cross_attn_layer = cross_attn_layer
@@ -301,6 +303,7 @@ class TagopModel(nn.Module):
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
         total_tag_prediction = util.masked_log_softmax(total_tag_prediction, mask = None)
         total_tag_prediction = util.replace_masked_values(total_tag_prediction, qtp_attention_mask.unsqueeze(-1), 0)
+        
         '''
         tgp = torch.zeros_like(total_tag_prediction)
         tag_prediction_loss = self.CRF_layer(total_tag_prediction.transpose(0,1), tag_labels.long().transpose(0,1), mask = mask_matrix)

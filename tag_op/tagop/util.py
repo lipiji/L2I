@@ -22,10 +22,9 @@ class ResidualGRU(nn.Module):
         output, _ = self.enc_layer(input)
         return self.enc_ln(output + input)
 
-
-class FFNLayer(nn.Module):
+class FFNLayer_(nn.Module):
     def __init__(self, input_dim, intermediate_dim, output_dim, dropout, layer_norm=True):
-        super(FFNLayer, self).__init__()
+        super(FFNLayer_, self).__init__()
         self.fc1 = nn.Linear(input_dim, intermediate_dim)
         if layer_norm:
             self.ln = nn.LayerNorm(intermediate_dim)
@@ -40,6 +39,50 @@ class FFNLayer(nn.Module):
         if self.ln:
             inter_act = self.ln(inter_act)
         return self.fc2(inter_act)
+
+class FFNLayer(nn.Module):
+    def __init__(self, input_dim, intermediate_dim, output_dim, dropout, layer_norm=True):
+        super(FFNLayer, self).__init__()
+        self.fc1 = nn.Linear(input_dim, intermediate_dim)
+        if layer_norm:
+            self.ln = nn.LayerNorm(input_dim)
+        else:
+            self.ln = None
+        self.dropout_func = nn.Dropout(dropout)
+        self.fc2 = nn.Linear(intermediate_dim, input_dim)
+        self.fc3 = nn.Linear(input_dim, output_dim)
+
+    def forward(self, input):
+        residual = input
+        x = self.fc1(input)
+        x = gelu(x)
+        x = self.dropout_func(x)
+        x = self.fc2(x)
+        x = self.dropout_func(x)
+        x = residual + x
+        if self.ln:
+          x = self.ln(x)
+        return self.fc3(x)
+
+
+class FFNLayer__(nn.Module):
+    def __init__(self, input_dim, intermediate_dim, output_dim, dropout, layer_norm=True):
+        super(FFNLayer__, self).__init__()
+        self.fc1 = nn.Linear(input_dim, intermediate_dim)
+        if layer_norm:
+            self.ln = nn.LayerNorm(input_dim)
+        else:
+            self.ln = None
+        self.dropout_func = nn.Dropout(dropout)
+        self.fc2 = nn.Linear(intermediate_dim, input_dim)
+        self.fc3 = nn.Linear(input_dim, output_dim)
+
+    def forward(self, input):
+        x = gelu(self.fc1(self.dropout_func(input)))
+        x = gelu(self.fc2(self.dropout_func(x)))
+        if self.ln:
+          x = self.ln(x)
+        return self.fc3(x)
 
 
 class IntermediateLayer(nn.Module):
