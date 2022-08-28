@@ -5,7 +5,7 @@ from data.tatqa_dataset import TagTaTQATestReader, TagTaTQAReader
 #from transformers.tokenization_roberta import RobertaTokenizer
 from transformers import RobertaTokenizer,T5Tokenizer,ElectraTokenizer
 from transformers import BertTokenizer,AutoTokenizer,DebertaV2Tokenizer
-from transformers import XLMRobertaTokenizer
+from transformers import XLMRobertaTokenizer,AlbertTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str)
@@ -46,7 +46,7 @@ elif args.encoder == "t5-3b":
     tokenizer = T5Tokenizer.from_pretrained("t5-3b")
     sep = '[SEP]'
 elif args.encoder == "albert-xxlarge-v2":
-    tokenizer = T5Tokenizer.from_pretrained("albert-xxlarge-v2")
+    tokenizer = AlbertTokenizer.from_pretrained("albert-xxlarge-v2")
     sep = '[SEP]'
 elif args.encoder == "xlm-roberta-large":
     tokenizer = XLMRobertaTokenizer.from_pretrained("/data/pjli/workspace/gitcodes/L2I/xlm-roberta-large/")
