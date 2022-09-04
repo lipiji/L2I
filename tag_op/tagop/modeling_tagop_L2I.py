@@ -130,7 +130,7 @@ class TagopModel(nn.Module):
             else:
                 dropout_prob = 0.1
 
-        intermediate_dim = 3 *hidden_size
+        intermediate_dim = 1 *hidden_size
         print(hidden_size, intermediate_dim)
         # if operator predictor
         self.if_operator_predictor = FFNLayer(hidden_size, intermediate_dim, if_operator_classes, dropout_prob)

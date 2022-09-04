@@ -22,9 +22,9 @@ class ResidualGRU(nn.Module):
         output, _ = self.enc_layer(input)
         return self.enc_ln(output + input)
 
-class FFNLayer_(nn.Module):
+class FFNLayer(nn.Module):
     def __init__(self, input_dim, intermediate_dim, output_dim, dropout, layer_norm=True):
-        super(FFNLayer_, self).__init__()
+        super(FFNLayer, self).__init__()
         self.fc1 = nn.Linear(input_dim, intermediate_dim)
         if layer_norm:
             self.ln = nn.LayerNorm(intermediate_dim)
@@ -40,9 +40,9 @@ class FFNLayer_(nn.Module):
             inter_act = self.ln(inter_act)
         return self.fc2(inter_act)
 
-class FFNLayer(nn.Module):
+class FFNLayer_(nn.Module):
     def __init__(self, input_dim, intermediate_dim, output_dim, dropout, layer_norm=True):
-        super(FFNLayer, self).__init__()
+        super(FFNLayer_, self).__init__()
         self.fc1 = nn.Linear(input_dim, intermediate_dim)
         if layer_norm:
             self.ln = nn.LayerNorm(input_dim)
